@@ -4,7 +4,6 @@ import 'package:f290_dsm_pdm2_objectbox_database_ct/repositories/nota_repository
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'objectbox.g.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -27,7 +26,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          primarySwatch: Colors.orange,
+          useMaterial3: true,
+          colorSchemeSeed: Colors.amber,
+          brightness: Brightness.light,
         ),
         home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
@@ -35,56 +36,49 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  final faker = Faker();
-  List<Nota> notas = [];
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<NotaRepository>().obterNotas();
-  }
+  static List<Nota> notas = [];
 
   @override
   Widget build(BuildContext context) {
+    context.read<NotaRepository>().obterNotas();
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Consumer<NotaRepository>(
         builder: (context, repo, child) {
           notas = repo.notas;
-          return ListView.separated(
-            itemBuilder: (context, index) => ListTile(
-              leading: CircleAvatar(child: Text('${notas[index].id}')),
-              title: Text(notas[index].titulo),
-              subtitle: Text(notas[index].descricao),
+          return ListView.builder(
+            itemBuilder: (context, index) => Card(
+              child: ListTile(
+                leading: CircleAvatar(child: Text('${notas[index].id}')),
+                title: Text(notas[index].titulo),
+                subtitle: Text(notas[index].descricao),
+              ),
             ),
-            separatorBuilder: (context, index) => const Divider(indent: 2),
             itemCount: notas.length,
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          setState(() {
-            final nota = Nota(
-              titulo: faker.conference.name(),
-              descricao: faker.lorem.sentence(),
-            );
+          final nota = Nota(
+            titulo: faker.conference.name(),
+            descricao: faker.lorem.sentence(),
+          );
 
-            Provider.of<NotaRepository>(context, listen: false).salvar(nota);
-            print(notas);
-          });
+          Provider.of<NotaRepository>(context, listen: false).salvar(nota);
+
+          //TODO: Ao clicar no FAB, abrir uma tela de cadastro
+          // Na tela de cadastro utilizar o Provider e salvar
+          // Após salvar, retornar para a tela principal
+          // Ao selcionar um item da lista, abrir o formulario
+          // preenchido com os dados selecionados.
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
