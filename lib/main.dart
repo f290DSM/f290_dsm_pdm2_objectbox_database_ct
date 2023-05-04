@@ -41,8 +41,6 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
 
-  static List<Nota> notas = [];
-
   @override
   Widget build(BuildContext context) {
     context.read<NotaRepository>().obterNotas();
@@ -52,15 +50,18 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Consumer<NotaRepository>(
         builder: (context, repo, child) {
-          notas = repo.notas;
+          List<Nota> notas = repo.notas;
           return ListView.builder(
-            itemBuilder: (context, index) => Card(
-              child: ListTile(
-                leading: CircleAvatar(child: Text('${notas[index].id}')),
-                title: Text(notas[index].titulo),
-                subtitle: Text(notas[index].descricao),
-              ),
-            ),
+            itemBuilder: (context, index) {
+              final nota = notas[index];
+              return Card(
+                child: ListTile(
+                  leading: CircleAvatar(child: Text('${nota.id}')),
+                  title: Text(nota.titulo),
+                  subtitle: Text(nota.descricao),
+                ),
+              );
+            },
             itemCount: notas.length,
           );
         },
