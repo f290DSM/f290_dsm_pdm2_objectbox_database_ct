@@ -73,7 +73,29 @@ class MyHomePage extends StatelessWidget {
             descricao: faker.lorem.sentence(),
           );
 
-          Provider.of<NotaRepository>(context, listen: false).salvar(nota);
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return SizedBox(
+                  height: MediaQuery.of(context).size.height * .3,
+                  child: Column(
+                    children: [
+                      TextField(),
+                      TextField(),
+                      ButtonBar(
+                        children: [
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('SALVAR'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ));
+            },
+          );
 
           //TODO: Ao clicar no FAB, abrir uma tela de cadastro
           // Na tela de cadastro utilizar o Provider e salvar
