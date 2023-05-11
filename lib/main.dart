@@ -1,11 +1,20 @@
 import 'package:f290_dsm_pdm2_objectbox_database_ct/model/db/objectbox_database.dart';
 import 'package:f290_dsm_pdm2_objectbox_database_ct/model/entities/nota_entity.dart';
+import 'package:f290_dsm_pdm2_objectbox_database_ct/pages/nota_page_form.dart';
 import 'package:f290_dsm_pdm2_objectbox_database_ct/repositories/nota_repository.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'objectbox.g.dart';
+
+late final Store store;
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final objectBox = await ObjectBoxDatabase();
+  store = await objectBox.getStore();
+
   runApp(const MyApp());
 }
 
@@ -16,11 +25,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<ObjectBoxDatabase>(
-          create: (context) => ObjectBoxDatabase(),
-        ),
         ChangeNotifierProvider<NotaRepository>(
-          create: (context) => NotaRepository(context.read()),
+          create: (context) => NotaRepository(store),
         ),
       ],
       child: MaterialApp(
@@ -68,34 +74,11 @@ class MyHomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          final nota = Nota(
-            titulo: faker.conference.name(),
-            descricao: faker.lorem.sentence(),
-          );
-
-          showModalBottomSheet(
-            context: context,
-            builder: (context) {
-              return SizedBox(
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: Column(
-                    children: [
-                      TextField(),
-                      TextField(),
-                      ButtonBar(
-                        children: [
-                          FilledButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('SALVAR'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ));
-            },
-          );
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const NotaPageForm(),
+              ));
 
           //TODO: Ao clicar no FAB, abrir uma tela de cadastro
           // Na tela de cadastro utilizar o Provider e salvar

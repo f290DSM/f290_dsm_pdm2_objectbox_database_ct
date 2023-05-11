@@ -1,16 +1,18 @@
 # f290_dsm_pdm2_objectbox_database_ct
 
-A new Flutter project.
+## Criação de Notas
+Ao clicar no FAB, abrir uma tela de cadastro
+Na tela de cadastro utilizar o Provider e salvar a nota no banco de dados.
+Após salvar, retornar para a tela principal.
 
-## Getting Started
+## Edição de Notas
+Ao selecionar um item da lista, abrir o formulario
+preenchido com os dados selecionados para edição.
 
-This project is a starting point for a Flutter application.
+## Criação de categorias
 
-A few resources to get you started if this is your first Flutter project:
+Criar a funcionalidade de criação de categorias para que possamos aplicar o relacionamento entre notas e categorias.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+> A estrututura da funcionalidade ficará ao seu critério; após a conclusão iremos alterar o formulário de notas para seleção de categorias na sua criação.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+>  https://github.com/f290DSM/f290_dsm_pdm2_objectbox_database_ct.git
