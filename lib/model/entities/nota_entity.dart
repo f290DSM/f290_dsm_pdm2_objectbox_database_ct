@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:f290_dsm_pdm2_objectbox_database_ct/model/entities/categoria_entity.dart';
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
@@ -7,6 +8,9 @@ class Nota {
   int id = 0;
   String titulo;
   String descricao;
+
+  @Backlink()
+  final categorias = ToMany<Categoria>();
 
   Nota({
     required this.titulo,

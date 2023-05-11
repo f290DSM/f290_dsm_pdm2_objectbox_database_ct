@@ -1,6 +1,7 @@
 import 'package:f290_dsm_pdm2_objectbox_database_ct/model/db/objectbox_database.dart';
 import 'package:f290_dsm_pdm2_objectbox_database_ct/model/entities/nota_entity.dart';
 import 'package:f290_dsm_pdm2_objectbox_database_ct/pages/nota_page_form.dart';
+import 'package:f290_dsm_pdm2_objectbox_database_ct/repositories/categoria_repository.dart';
 import 'package:f290_dsm_pdm2_objectbox_database_ct/repositories/nota_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,7 @@ late final Store store;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final objectBox = await ObjectBoxDatabase();
+  final objectBox = ObjectBoxDatabase();
   store = await objectBox.getStore();
 
   runApp(const MyApp());
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<NotaRepository>(
           create: (context) => NotaRepository(store),
         ),
+        ChangeNotifierProvider(
+          create: (context) => CategoriaRepository(store),
+        )
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
