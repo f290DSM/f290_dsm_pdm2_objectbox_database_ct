@@ -23,7 +23,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(1, 2042862207842131351),
       name: 'Nota',
-      lastPropertyId: const IdUid(3, 2987783589689524455),
+      lastPropertyId: const IdUid(4, 1654198283698756409),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -40,12 +40,17 @@ final _entities = <ModelEntity>[
             id: const IdUid(3, 2987783589689524455),
             name: 'descricao',
             type: 9,
-            flags: 0)
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(4, 1654198283698756409),
+            name: 'categoriaId',
+            type: 11,
+            flags: 520,
+            indexId: const IdUid(2, 3191718421369372349),
+            relationTarget: 'Categoria')
       ],
       relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[
-        ModelBacklink(name: 'categorias', srcEntity: 'Categoria', srcField: '')
-      ]),
+      backlinks: <ModelBacklink>[]),
   ModelEntity(
       id: const IdUid(2, 637949416726676216),
       name: 'Categoria',
@@ -61,17 +66,12 @@ final _entities = <ModelEntity>[
             id: const IdUid(2, 4505256044069650194),
             name: 'descricao',
             type: 9,
-            flags: 0),
-        ModelProperty(
-            id: const IdUid(3, 7582216120140032698),
-            name: 'notaId',
-            type: 11,
-            flags: 520,
-            indexId: const IdUid(1, 3322760258931799716),
-            relationTarget: 'Nota')
+            flags: 0)
       ],
       relations: <ModelRelation>[],
-      backlinks: <ModelBacklink>[])
+      backlinks: <ModelBacklink>[
+        ModelBacklink(name: 'notas', srcEntity: 'Nota', srcField: '')
+      ])
 ];
 
 /// Open an ObjectBox store with the model declared in this file.
@@ -95,13 +95,13 @@ ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
       lastEntityId: const IdUid(2, 637949416726676216),
-      lastIndexId: const IdUid(1, 3322760258931799716),
-      lastRelationId: const IdUid(0, 0),
+      lastIndexId: const IdUid(2, 3191718421369372349),
+      lastRelationId: const IdUid(1, 8700879635271303927),
       lastSequenceId: const IdUid(0, 0),
       retiredEntityUids: const [],
-      retiredIndexUids: const [],
-      retiredPropertyUids: const [],
-      retiredRelationUids: const [],
+      retiredIndexUids: const [3322760258931799716],
+      retiredPropertyUids: const [7582216120140032698],
+      retiredRelationUids: const [8700879635271303927],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
       version: 1);
@@ -109,12 +109,8 @@ ModelDefinition getObjectBoxModel() {
   final bindings = <Type, EntityDefinition>{
     Nota: EntityDefinition<Nota>(
         model: _entities[0],
-        toOneRelations: (Nota object) => [],
-        toManyRelations: (Nota object) => {
-              RelInfo<Categoria>.toOneBacklink(
-                      3, object.id, (Categoria srcObject) => srcObject.nota):
-                  object.categorias
-            },
+        toOneRelations: (Nota object) => [object.categoria],
+        toManyRelations: (Nota object) => {},
         getId: (Nota object) => object.id,
         setId: (Nota object, int id) {
           object.id = id;
@@ -122,10 +118,11 @@ ModelDefinition getObjectBoxModel() {
         objectToFB: (Nota object, fb.Builder fbb) {
           final tituloOffset = fbb.writeString(object.titulo);
           final descricaoOffset = fbb.writeString(object.descricao);
-          fbb.startTable(4);
+          fbb.startTable(5);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, tituloOffset);
           fbb.addOffset(2, descricaoOffset);
+          fbb.addInt64(3, object.categoria.targetId);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -139,17 +136,19 @@ ModelDefinition getObjectBoxModel() {
               descricao: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, ''))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-          InternalToManyAccess.setRelInfo<Nota>(
-              object.categorias,
-              store,
-              RelInfo<Categoria>.toOneBacklink(
-                  3, object.id, (Categoria srcObject) => srcObject.nota));
+          object.categoria.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          object.categoria.attach(store);
           return object;
         }),
     Categoria: EntityDefinition<Categoria>(
         model: _entities[1],
-        toOneRelations: (Categoria object) => [object.nota],
-        toManyRelations: (Categoria object) => {},
+        toOneRelations: (Categoria object) => [],
+        toManyRelations: (Categoria object) => {
+              RelInfo<Nota>.toOneBacklink(
+                      4, object.id, (Nota srcObject) => srcObject.categoria):
+                  object.notas
+            },
         getId: (Categoria object) => object.id,
         setId: (Categoria object, int id) {
           object.id = id;
@@ -159,7 +158,6 @@ ModelDefinition getObjectBoxModel() {
           fbb.startTable(4);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, descricaoOffset);
-          fbb.addInt64(2, object.nota.targetId);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -171,9 +169,11 @@ ModelDefinition getObjectBoxModel() {
               descricao: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-          object.nota.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
-          object.nota.attach(store);
+          InternalToManyAccess.setRelInfo<Categoria>(
+              object.notas,
+              store,
+              RelInfo<Nota>.toOneBacklink(
+                  4, object.id, (Nota srcObject) => srcObject.categoria));
           return object;
         })
   };
@@ -192,6 +192,10 @@ class Nota_ {
   /// see [Nota.descricao]
   static final descricao =
       QueryStringProperty<Nota>(_entities[0].properties[2]);
+
+  /// see [Nota.categoria]
+  static final categoria =
+      QueryRelationToOne<Nota, Categoria>(_entities[0].properties[3]);
 }
 
 /// [Categoria] entity fields to define ObjectBox queries.
@@ -202,8 +206,4 @@ class Categoria_ {
   /// see [Categoria.descricao]
   static final descricao =
       QueryStringProperty<Categoria>(_entities[1].properties[1]);
-
-  /// see [Categoria.nota]
-  static final nota =
-      QueryRelationToOne<Categoria, Nota>(_entities[1].properties[2]);
 }

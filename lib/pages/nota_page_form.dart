@@ -1,5 +1,7 @@
 import 'package:f290_dsm_pdm2_objectbox_database_ct/model/entities/categoria_entity.dart';
+import 'package:f290_dsm_pdm2_objectbox_database_ct/model/entities/nota_entity.dart';
 import 'package:f290_dsm_pdm2_objectbox_database_ct/repositories/categoria_repository.dart';
+import 'package:f290_dsm_pdm2_objectbox_database_ct/repositories/nota_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,8 +16,6 @@ class NotaPageForm extends StatelessWidget {
     final descricaoController = TextEditingController();
 
     Provider.of<CategoriaRepository>(context, listen: false).getAll();
-
-    Categoria? selected;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,6 +55,20 @@ class NotaPageForm extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          var nota = Nota(
+            titulo: tituloController.text,
+            descricao: descricaoController.text,
+          );
+
+          Categoria? categoria =
+              Provider.of<CategoriaRepository>(context, listen: false)
+                  .categoria;
+
+          // nota.categorias.add(categoria!);
+          nota.categoria.target = categoria;
+
+          Provider.of<NotaRepository>(context, listen: false).salvar(nota);
+
           Navigator.pop(context);
         },
         label: const Text('Salvar'),

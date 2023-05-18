@@ -72,6 +72,7 @@ class MyHomePage extends StatelessWidget {
       body: Consumer<NotaRepository>(
         builder: (context, repo, child) {
           List<Nota> notas = repo.notas;
+          print(notas);
           return ListView.builder(
             itemBuilder: (context, index) {
               final nota = notas[index];
@@ -80,6 +81,9 @@ class MyHomePage extends StatelessWidget {
                   leading: CircleAvatar(child: Text('${nota.id}')),
                   title: Text(nota.titulo),
                   subtitle: Text(nota.descricao),
+                  trailing: Chip(
+                    label: Text(nota.categoria.target!.descricao),
+                  ),
                 ),
               );
             },

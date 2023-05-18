@@ -20,10 +20,9 @@ class NotaRepository extends ChangeNotifier {
   }
 
   salvar(Nota pNota) async {
-    final nota = Nota(titulo: pNota.titulo, descricao: pNota.descricao);
     final box = await getBox();
-    box.put(nota);
-    _notas.add(nota);
+    box.put(pNota);
+    _notas.add(pNota);
     notifyListeners();
   }
 

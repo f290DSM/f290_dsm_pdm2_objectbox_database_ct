@@ -9,8 +9,7 @@ class Nota {
   String titulo;
   String descricao;
 
-  @Backlink()
-  final categorias = ToMany<Categoria>();
+  final categoria = ToOne<Categoria>();
 
   Nota({
     required this.titulo,
@@ -18,7 +17,8 @@ class Nota {
   });
 
   @override
-  String toString() => 'Nota(id: $id, titulo: $titulo, descricao: $descricao)';
+  String toString() =>
+      'Nota(id: $id, titulo: $titulo, descricao: $descricao,  categoria: $categoria)';
 }
 
 //flutter pub run build_runner build
