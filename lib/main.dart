@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'objectbox.g.dart';
+import 'pages/category_page.dart';
 
 late final Store store;
 
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
           colorSchemeSeed: Colors.amber,
           brightness: Brightness.light,
         ),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        home: const MyHomePage(title: 'ObjectBox Notes'),
       ),
     );
   }
@@ -57,6 +58,16 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CategoryPage()));
+              },
+              icon: const Icon(Icons.category_outlined))
+        ],
       ),
       body: Consumer<NotaRepository>(
         builder: (context, repo, child) {
@@ -76,7 +87,7 @@ class MyHomePage extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
               context,
@@ -90,8 +101,8 @@ class MyHomePage extends StatelessWidget {
           // Ao selcionar um item da lista, abrir o formulario
           // preenchido com os dados selecionados.
         },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        label: const Text('Criar'),
+        icon: const Icon(Icons.add),
       ),
     );
   }
